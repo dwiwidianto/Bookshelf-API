@@ -1,5 +1,7 @@
-// eslint-disable-next-line object-curly-newline
-const { addBookController, getAllBookControllers, getBookByIdControllers, editBookByIdControllers, deleteBookByIdController } = require('./books/Bookcontrollers');
+const {
+  // eslint-disable-next-line max-len
+  addBookController, getAllBookControllers, getBookByIdControllers, editBookByIdControllers, deleteBookByIdController,
+} = require('./books/Bookcontrollers');
 
 const routes = [
   {

@@ -3,8 +3,9 @@ const books = require('./books');
 
 /* Tambah Buku */
 const addBookController = (request, h) => {
-  // eslint-disable-next-line object-curly-newline
-  const { name, year, author, summary, pageCount, readPage, reading } = request.payload;
+  const {
+    name, year, author, summary, pageCount, readPage, reading,
+  } = request.payload;
 
   const id = nanoid(16);
   const insertedAt = new Date().toISOString();
