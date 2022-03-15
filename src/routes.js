@@ -1,4 +1,5 @@
-const { addBookController, getAllBookControllers, getBookByIdControllers } = require('./books/Bookcontrollers');
+// eslint-disable-next-line object-curly-newline
+const { addBookController, getAllBookControllers, getBookByIdControllers, editBookByIdControllers, deleteBookByIdController } = require('./books/Bookcontrollers');
 
 const routes = [
   {
@@ -15,6 +16,16 @@ const routes = [
     method: 'GET',
     path: '/books/{id}',
     handler: getBookByIdControllers,
+  },
+  {
+    method: 'PUT',
+    path: '/books/{id}',
+    handler: editBookByIdControllers,
+  },
+  {
+    method: 'DELETE',
+    path: '/books/{id}',
+    handler: deleteBookByIdController,
   },
 ];
 
