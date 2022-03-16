@@ -1,11 +1,10 @@
+/* eslint-disable no-undef */
 const { nanoid } = require('nanoid');
 const books = require('./books');
 
 /* Tambah Buku */
 const addBookController = (request, h) => {
-  const {
-    name, year, author, summary, pageCount, readPage, reading,
-  } = request.payload;
+  const { name, year, author, summary, publisher, pageCount, readPage, reading } = request.payload;
 
   const id = nanoid(16);
   const insertedAt = new Date().toISOString();
@@ -18,6 +17,7 @@ const addBookController = (request, h) => {
     year,
     author,
     summary,
+    publisher,
     pageCount,
     readPage,
     reading,
@@ -28,13 +28,11 @@ const addBookController = (request, h) => {
 
   books.push(newBook);
 
-  const isSuccess = books.filter((book) => book.id === id).length > 0;
-
   if (name === undefined) {
     return h
       .response({
         status: 'fail',
-        message: 'gagal menambahkan buku. Mohon isi nama buku',
+        message: 'Gagal menambahkan buku. Mohon isi nama buku',
       })
       .code(400);
   }
@@ -48,6 +46,7 @@ const addBookController = (request, h) => {
       .code(400);
   }
 
+  const isSuccess = books.filter((book) => book.id === id).length > 0;
   if (isSuccess) {
     const response = h.response({
       status: 'success',
@@ -71,12 +70,38 @@ const addBookController = (request, h) => {
 /* End Tambah Buku  */
 
 /* Tampilkan Semua Buku  */
-const getAllBookControllers = () => ({
-  status: 'success',
-  data: {
-    books,
-  },
-});
+const getAllBookControllers = (request, h) => {
+  const { reading } = request.query;
+
+  if (reading) {
+    const filterReading = books.filter((book) => Number(book.reading) === Number(reading));
+    return h
+      .response({
+        status: 'success',
+        data: {
+          books: filterReading.map((book) => ({
+            id: book.id,
+            name: book.name,
+            publisher: book.publisher,
+          })),
+        },
+      })
+      .code(200);
+  }
+
+  return h
+    .response({
+      status: 'success',
+      data: {
+        books: books.map((book) => ({
+          id: book.id,
+          name: book.name,
+          publisher: book.publisher,
+        })),
+      },
+    })
+    .code(200);
+};
 
 /* End Tampilkan Semua Buku */
 
@@ -84,24 +109,25 @@ const getAllBookControllers = () => ({
 
 const getBookByIdControllers = (request, h) => {
   const { id } = request.params;
-
   const book = books.filter((n) => n.id === id)[0];
 
-  if (book !== undefined) {
-    return {
-      status: 'success',
-      data: {
-        book,
-      },
-    };
+  if (book) {
+    return h
+      .response({
+        status: 'success',
+        data: {
+          book,
+        },
+      })
+      .code(200);
   }
 
-  const response = h.response({
-    status: 'fail',
-    message: 'Buku tidak ditemukan',
-  });
-  response.code(404);
-  return response;
+  return h
+    .response({
+      status: 'fail',
+      message: 'Buku tidak ditemukan',
+    })
+    .code(400);
 };
 
 /* End Tampilan Detail Book */
@@ -111,9 +137,7 @@ const getBookByIdControllers = (request, h) => {
 const editBookByIdControllers = (request, h) => {
   const { id } = request.params;
 
-  const {
-    name, year, author, summary, pageCount, readPage, reading,
-  } = request.payload;
+  const { name, year, author, summary, publisher, pageCount, readPage, reading } = request.payload;
   const updatedAt = new Date().toISOString();
 
   const index = books.findIndex((book) => book.id === id);
@@ -142,6 +166,7 @@ const editBookByIdControllers = (request, h) => {
       year,
       author,
       summary,
+      publisher,
       pageCount,
       readPage,
       reading,
@@ -150,7 +175,7 @@ const editBookByIdControllers = (request, h) => {
 
     const response = h.response({
       status: 'success',
-      message: 'Book berhasil diperbarui',
+      message: 'Buku berhasil diperbarui',
     });
     response.code(200);
     return response;
@@ -173,7 +198,7 @@ const deleteBookByIdController = (request, h) => {
     books.splice(index, 1);
     const response = h.response({
       status: 'success',
-      message: 'Books berhasil dihapus',
+      message: 'Buku berhasil dihapus',
     });
     response.code(200);
     return response;
@@ -181,7 +206,7 @@ const deleteBookByIdController = (request, h) => {
 
   const response = h.response({
     status: 'fail',
-    message: 'Buku gagal di hapus. Id tidak di temukan',
+    message: 'Buku gagal dihapus, Id tidak ditemukan',
   });
   response.code(404);
   return response;
