@@ -4,7 +4,27 @@ const books = require('./books');
 
 /* Tambah Buku */
 const addBookController = (request, h) => {
-  const { name, year, author, summary, publisher, pageCount, readPage, reading } = request.payload;
+  const {
+    name, year, author, summary, publisher, pageCount, readPage, reading,
+  } = request.payload;
+
+  if (name === undefined) {
+    return h
+      .response({
+        status: 'fail',
+        message: 'Gagal menambahkan buku. Mohon isi nama buku',
+      })
+      .code(400);
+  }
+
+  if (request.payload.readPage > request.payload.pageCount) {
+    return h
+      .response({
+        status: 'fail',
+        message: 'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount',
+      })
+      .code(400);
+  }
 
   const id = nanoid(16);
   const insertedAt = new Date().toISOString();
@@ -27,24 +47,6 @@ const addBookController = (request, h) => {
   };
 
   books.push(newBook);
-
-  if (name === undefined) {
-    return h
-      .response({
-        status: 'fail',
-        message: 'Gagal menambahkan buku. Mohon isi nama buku',
-      })
-      .code(400);
-  }
-
-  if (request.payload.readPage > request.payload.pageCount) {
-    return h
-      .response({
-        status: 'fail',
-        message: 'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount',
-      })
-      .code(400);
-  }
 
   const isSuccess = books.filter((book) => book.id === id).length > 0;
   if (isSuccess) {
@@ -137,7 +139,9 @@ const getBookByIdControllers = (request, h) => {
 const editBookByIdControllers = (request, h) => {
   const { id } = request.params;
 
-  const { name, year, author, summary, publisher, pageCount, readPage, reading } = request.payload;
+  const {
+    name, year, author, summary, publisher, pageCount, readPage, reading,
+  } = request.payload;
   const updatedAt = new Date().toISOString();
 
   const index = books.findIndex((book) => book.id === id);
