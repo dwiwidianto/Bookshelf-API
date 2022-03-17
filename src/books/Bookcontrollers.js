@@ -129,7 +129,7 @@ const getBookByIdControllers = (request, h) => {
       status: 'fail',
       message: 'Buku tidak ditemukan',
     })
-    .code(400);
+    .code(404);
 };
 
 /* End Tampilan Detail Book */
@@ -160,7 +160,7 @@ const editBookByIdControllers = (request, h) => {
       status: 'fail',
       message: 'Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount',
     });
-    response.code(404);
+    response.code(400);
     return response;
   }
   if (index !== -1) {
@@ -187,7 +187,7 @@ const editBookByIdControllers = (request, h) => {
 
   const response = h.response({
     status: 'fail',
-    message: 'Gagal memperbarui buku. Id tidak di temukan',
+    message: 'Gagal memperbarui buku. Id tidak ditemukan',
   });
   response.code(404);
   return response;
@@ -210,7 +210,7 @@ const deleteBookByIdController = (request, h) => {
 
   const response = h.response({
     status: 'fail',
-    message: 'Buku gagal dihapus, Id tidak ditemukan',
+    message: 'Buku gagal dihapus. Id tidak ditemukan',
   });
   response.code(404);
   return response;
